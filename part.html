@@ -18,6 +18,32 @@ body.dark{
   --card:#1e293b;
   --primary:#3b82f6;
 }
+.back-wrapper{
+  padding: 12px 16px;
+}
+
+.btn-back{
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 6px 14px rgba(0,0,0,.15);
+  transition: all .2s ease;
+}
+
+.btn-back:hover{
+  transform: translateX(-3px);
+  opacity: .9;
+}
+
+/* dark mode ikut otomatis */
+body.dark .btn-back{
+  background: #0f172a;
+}
 
 *{
   box-sizing:border-box;
@@ -135,6 +161,9 @@ body.dark .btn-private{
 <body>
 
 <header>
+  <div class="back-wrapper">
+  <a href="index.html" class="btn-back">← Kembali</a>
+  </div>
   <a href="https://youtube.com/@mrrusdiana" target="_blank">MR. RUSDIANA</a>
   <div class="toggle" onclick="toggleMode()"><span></span></div>
 </header>
