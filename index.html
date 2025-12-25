@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mr. Rustiana</title>
+
+<style>
+:root{
+  --bg:#ffffff;
+  --text:#000000;
+  --card:#f4f4f4;
+  --primary:#2563eb;
+}
+body.dark{
+  --bg:#0f172a;
+  --text:#e5e7eb;
+  --card:#1e293b;
+  --primary:#3b82f6;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Arial,sans-serif}
+body{
+  background:var(--bg);
+  color:var(--text);
+  transition:.3s;
+}
+
+header{
+  position:fixed;
+  top:0;left:0;right:0;
+  height:60px;
+  background:var(--bg);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 20px;
+  border-bottom:1px solid #ddd;
+  z-index:100;
+}
+
+header a{
+  text-decoration:none;
+  color:var(--text);
+  font-weight:600;
+  font-size:20px;
+}
+
+.toggle{
+  width:50px;height:26px;
+  background:#ccc;
+  border-radius:20px;
+  position:relative;
+  cursor:pointer;
+}
+.toggle span{
+  width:22px;height:22px;
+  background:white;
+  border-radius:50%;
+  position:absolute;
+  top:2px;left:2px;
+  transition:.3s;
+}
+body.dark .toggle{
+  background:var(--primary);
+}
+body.dark .toggle span{
+  left:26px;
+}
+
+.search-bar{
+  margin-top:70px;
+  padding:20px;
+  display:flex;
+  gap:10px;
+}
+.search-bar input{
+  flex:1;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #ccc;
+}
+.search-bar button{
+  padding:12px 18px;
+  background:var(--primary);
+  color:white;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+main{
+  padding:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:20px;
+}
+
+.card{
+  background:var(--card);
+  border-radius:20px;
+  padding:15px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.card img{
+  width:100%;
+  aspect-ratio:16/9;
+  object-fit:cover;
+  border-radius:14px;
+}
+.card h3{
+  font-size:16px;
+}
+.card a{
+  margin-top:auto;
+  background:var(--primary);
+  color:white;
+  text-align:center;
+  padding:10px;
+  border-radius:14px;
+  text-decoration:none;
+}
+
+footer{
+  padding:20px;
+  text-align:center;
+}
+footer button{
+  background:none;
+  border:1px solid #ccc;
+  padding:8px 14px;
+  border-radius:8px;
+  cursor:pointer;
+  color:var(--text);
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <a href="https://youtube.com/@mrrusdiana" target="_blank">MR. RUSDIANA</a>
+  <div class="toggle" onclick="toggleMode()"><span></span></div>
+</header>
+
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Cari konten...">
+  <button onclick="applySearch()">Cari</button>
+</div>
+
+<main id="contentList"></main>
+
+<footer>
+  <button>« Sebelumnya</button>
+  <button>Berikutnya »</button>
+</footer>
+
+<script>
+function toggleMode(){
+  document.body.classList.toggle("dark");
+}
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getFirestore, collection, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA3aIqisDiMJodevc3r_8w4i5KzD3C3880",
+  authDomain: "rusdianacuy.firebaseapp.com",
+  projectId: "rusdianacuy",
+  storageBucket: "rusdianacuy.firebasestorage.app",
+  messagingSenderId: "236793154782",
+  appId: "1:236793154782:web:4e8df196244176bfcdc64f",
+  measurementId: "G-ZH2PQ2ZNST"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const container = document.getElementById("contentList");
+let allData = [];
+
+const q = query(
+  collection(db, "mainContents"),
+  where("active", "==", true)
+);
+
+onSnapshot(q, (snapshot) => {
+  allData = [];
+  snapshot.forEach((doc) => {
+    allData.push({ id: doc.id, ...doc.data() });
+  });
+  render(allData);
+});
+
+function render(data){
+  container.innerHTML = "";
+  data.forEach(d => {
+    container.innerHTML += `
+      <div class="card">
+        <img src="${d.image}">
+        <h3>${d.title}</h3>
+        <a href="part.html?part=${d.id}">KUNJUNGI</a>
+      </div>
+    `;
+  });
+}
+
+window.applySearch = () => {
+  const keyword = document.getElementById("searchInput").value.toLowerCase();
+  const filtered = allData.filter(d => d.title.toLowerCase().includes(keyword));
+  render(filtered);
+};
+</script>
+
+</body>
+</html>

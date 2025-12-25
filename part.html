@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PART</title>
+
+<style>
+:root{
+  --bg:#ffffff;
+  --text:#000000;
+  --card:#f4f4f4;
+  --primary:#2563eb;
+}
+body.dark{
+  --bg:#0f172a;
+  --text:#e5e7eb;
+  --card:#1e293b;
+  --primary:#3b82f6;
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Inter,Arial,sans-serif;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  transition:.3s;
+}
+
+header{
+  position:fixed;
+  top:0;left:0;right:0;
+  height:60px;
+  background:var(--bg);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 20px;
+  border-bottom:1px solid #ddd;
+  z-index:100;
+}
+
+header a{
+  text-decoration:none;
+  color:var(--text);
+  font-weight:600;
+  font-size:20px;
+}
+
+.toggle{
+  width:50px;height:26px;
+  background:#ccc;
+  border-radius:20px;
+  position:relative;
+  cursor:pointer;
+}
+.toggle span{
+  width:22px;height:22px;
+  background:#fff;
+  border-radius:50%;
+  position:absolute;
+  top:2px;left:2px;
+  transition:.3s;
+}
+body.dark .toggle{
+  background:var(--primary);
+}
+body.dark .toggle span{
+  left:26px;
+}
+
+main{
+  margin-top:80px;
+  padding:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:20px;
+}
+
+.card{
+  background:var(--card);
+  border-radius:20px;
+  padding:15px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.card img{
+  width:100%;
+  aspect-ratio:16/9;
+  object-fit:cover;
+  border-radius:14px;
+}
+
+.card h3{
+  font-size:16px;
+}
+
+.btn-group{
+  margin-top:auto;
+  display:flex;
+  gap:10px;
+}
+
+.btn{
+  flex:1;
+  padding:10px;
+  border-radius:12px;
+  text-align:center;
+  text-decoration:none;
+  font-size:14px;
+}
+
+.btn-public{
+  background:var(--primary);
+  color:#fff;
+}
+
+.btn-private{
+  background:#111827;
+  color:#fff;
+}
+body.dark .btn-private{
+  background:#020617;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <a href="https://youtube.com/@mrrusdiana" target="_blank">MR. RUSDIANA</a>
+  <div class="toggle" onclick="toggleMode()"><span></span></div>
+</header>
+
+<main id="itemList"></main>
+
+<script>
+function toggleMode(){
+  document.body.classList.toggle("dark");
+}
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA3aIqisDiMJodevc3r_8w4i5KzD3C3880",
+  authDomain: "rusdianacuy.firebaseapp.com",
+  projectId: "rusdianacuy"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const params = new URLSearchParams(window.location.search);
+const partId = params.get("part");
+const container = document.getElementById("itemList");
+
+if(!partId){
+  container.innerHTML = "<p>PART tidak ditemukan</p>";
+} else {
+  const q = query(
+    collection(db, "mainContents", partId, "items"),
+    where("active", "==", true)
+  );
+
+  onSnapshot(q, (snapshot) => {
+    container.innerHTML = "";
+    snapshot.forEach((doc) => {
+      const d = doc.data();
+      container.innerHTML += `
+        <div class="card">
+          <img src="${d.image}">
+          <h3>${d.title}</h3>
+          <div class="btn-group">
+            <a href="${d.link_public}" target="_blank" class="btn btn-public">No Password</a>
+            <a href="${d.link_private}" target="_blank" class="btn btn-private">With Password</a>
+          </div>
+        </div>
+      `;
+    });
+  });
+}
+</script>
+
+</body>
+</html>
