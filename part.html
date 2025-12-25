@@ -18,31 +18,41 @@ body.dark{
   --card:#1e293b;
   --primary:#3b82f6;
 }
-.back-wrapper{
-  padding: 12px 16px;
-}
+
+  .back-wrapper{
+  display: flex;
+  justify-content: center;   /* tengah horizontal */
+  margin: 28px 0 40px;       /* jarak dari konten & bawah */
+  }
 
 .btn-back{
-  display: inline-block;
-  padding: 8px 14px;
-  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 12px 22px;        /* ukuran nyaman di HP */
+  border-radius: 999px;      /* pill shape */
+  
   background: var(--card);
   color: var(--text);
-  text-decoration: none;
+
+  font-size: 15px;
   font-weight: 600;
-  font-size: 14px;
-  box-shadow: 0 6px 14px rgba(0,0,0,.15);
-  transition: all .2s ease;
+  text-decoration: none;
+
+  box-shadow: 0 8px 20px rgba(0,0,0,.15);
+  transition: all .25s ease;
 }
 
 .btn-back:hover{
-  transform: translateX(-3px);
-  opacity: .9;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0,0,0,.2);
+  opacity: .95;
 }
 
-/* dark mode ikut otomatis */
 body.dark .btn-back{
-  background: #0f172a;
+  background: #0f172a;   /* senada dark card */
+  color: #e5e7eb;
 }
 
 *{
