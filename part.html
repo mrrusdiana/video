@@ -168,10 +168,10 @@ if(!partId){
   container.innerHTML = "<p>PART tidak ditemukan</p>";
 } else {
   const q = query(
-    collection(db, "mainContents", partId, "items"),
-    where("active", "==", true)
-  );
-
+  collection(db, "items"),
+  where("active", "==", true),
+  where("__name__", "==", partId)
+);
   onSnapshot(q, (snapshot) => {
     container.innerHTML = "";
     snapshot.forEach((doc) => {
