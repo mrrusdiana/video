@@ -11,77 +11,21 @@
   --text:#000000;
   --card:#f4f4f4;
   --primary:#2563eb;
+
+  /* NOTICE */
+  --notice-bg:#f8fafc;
+  --notice-text:#111827;
 }
+
 body.dark{
   --bg:#0f172a;
   --text:#e5e7eb;
   --card:#1e293b;
-  --primary:#3b82f6;
+
+  /* NOTICE */
+  --notice-bg:#020617;
+  --notice-text:#e5e7eb;
 }
-.notice-box{
-  margin: 16px;
-  padding: 14px 16px;
-  background: var(--card);
-  border-radius: 14px;
-  display: flex;
-  gap: 12px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.15);
-}
-
-.notice-line{
-  width: 4px;
-  border-radius: 99px;
-  background: linear-gradient(180deg, #ffb703, #fb8500);
-}
-
-.notice-content{
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--text);
-}
-
-.notice-content strong{
-  font-size: 14px;
-}
-:root { --card; --text; }
-body.dark { --card; --text; }
-
-  .back-wrapper{
-  display: flex;
-  justify-content: center;   /* tengah horizontal */
-  margin: 28px 0 40px;       /* jarak dari konten & bawah */
-  }
-
-.btn-back{
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-
-  padding: 12px 22px;        /* ukuran nyaman di HP */
-  border-radius: 999px;      /* pill shape */
-  
-  background: var(--card);
-  color: var(--text);
-
-  font-size: 15px;
-  font-weight: 600;
-  text-decoration: none;
-
-  box-shadow: 0 8px 20px rgba(0,0,0,.15);
-  transition: all .25s ease;
-}
-
-.btn-back:hover{
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(0,0,0,.2);
-  opacity: .95;
-}
-
-body.dark .btn-back{
-  background: #0f172a;   /* senada dark card */
-  color: #e5e7eb;
-}
-
 *{
   box-sizing:border-box;
   margin:0;
@@ -97,76 +41,79 @@ body{
 
 header{
   position:fixed;
-  top:0;left:0;right:0;
-  height:60px;
+  top:0;
+  left:0;
+  right:0;
+  height:64px;
   background:var(--bg);
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 20px;
-  border-bottom:1px solid #ddd;
-  z-index:100;
-}
-
-header a{
-  text-decoration:none;
-  color:var(--text);
-  font-weight:600;
-  font-size:20px;
+  padding:0 16px;
+  box-shadow:0 4px 10px rgba(0,0,0,.1);
+  z-index:1000;
 }
 
 .toggle{
-  width:50px;height:26px;
+  width:46px;
+  height:24px;
   background:#ccc;
-  border-radius:20px;
+  border-radius:999px;
   position:relative;
   cursor:pointer;
 }
 .toggle span{
-  width:22px;height:22px;
+  position:absolute;
+  top:2px;
+  left:2px;
+  width:20px;
+  height:20px;
   background:#fff;
   border-radius:50%;
-  position:absolute;
-  top:2px;left:2px;
   transition:.3s;
 }
 body.dark .toggle{
-  background:var(--primary);
+  background:#2563eb;
 }
 body.dark .toggle span{
-  left:26px;
+  transform:translateX(22px);
 }
 
-main{
+.page-content{
   margin-top:80px;
-  padding:20px;
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
-  gap:20px;
+}
+
+.notice-box{
+  background:var(--notice-bg);
+  color:var(--notice-text);
+  border-left:4px solid #f59e0b;
+  padding:14px 16px;
+  border-radius:12px;
+  margin:16px;
+  font-size:14px;
+  line-height:1.5;
+  box-shadow:0 8px 20px rgba(0,0,0,.25);
+  transition:.3s;
 }
 
 .card{
   background:var(--card);
-  border-radius:20px;
-  padding:15px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
+  margin:16px;
+  border-radius:16px;
+  padding:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
 }
 
 .card img{
   width:100%;
-  aspect-ratio:16/9;
-  object-fit:cover;
-  border-radius:14px;
+  border-radius:12px;
 }
 
 .card h3{
-  font-size:16px;
+  margin:12px 0;
 }
 
 .btn-group{
-  margin-top:auto;
   display:flex;
   gap:10px;
 }
@@ -177,20 +124,25 @@ main{
   border-radius:12px;
   text-align:center;
   text-decoration:none;
-  font-size:14px;
+  color:#fff;
+  font-weight:600;
 }
 
-.btn-public{
-  background:var(--primary);
-  color:#fff;
-}
+.btn-public{background:#2563eb;}
+.btn-private{background:#111827;}
 
-.btn-private{
-  background:#111827;
-  color:#fff;
+.back-wrapper{
+  display:flex;
+  justify-content:center;
+  margin:30px 0;
 }
-body.dark .btn-private{
-  background:#020617;
+.btn-back{
+  padding:10px 22px;
+  background:var(--card);
+  color:var(--text);
+  border-radius:999px;
+  text-decoration:none;
+  box-shadow:0 8px 20px rgba(0,0,0,.15);
 }
 </style>
 </head>
@@ -203,14 +155,14 @@ body.dark .btn-private{
   <div class="toggle" onclick="toggleMode()"><span></span></div>
 </header>
 
-<!-- NOTICE -->
-<div class="notice-box">
-  <div class="notice-line"></div>
-  <div class="notice-content">
+<div class="page-content">
+
+  <div class="notice-box">
     <strong>Perhatian:</strong><br>
-    Link Dengan Password akan Expired/Kadaluwarsa dalam 1 Minggu setelah Upload, Jadi kalau sudah 1 Minggu gunakan link No Password aja ya, Thank You
+    Link <b>With Password</b> akan <b>expired / kadaluarsa</b> dalam 1 minggu setelah upload.
+    Jika sudah lewat 1 minggu, silakan gunakan link <b>No Password</b>.
+    <br><br>Terima kasih 🙏
   </div>
-</div>
 
 <main id="itemList"></main>
   <div class="back-wrapper">
