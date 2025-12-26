@@ -18,6 +18,33 @@ body.dark{
   --card:#1e293b;
   --primary:#3b82f6;
 }
+.notice-box{
+  margin: 16px;
+  padding: 14px 16px;
+  background: var(--card);
+  border-radius: 14px;
+  display: flex;
+  gap: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.15);
+}
+
+.notice-line{
+  width: 4px;
+  border-radius: 99px;
+  background: linear-gradient(180deg, #ffb703, #fb8500);
+}
+
+.notice-content{
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.notice-content strong{
+  font-size: 14px;
+}
+:root { --card; --text; }
+body.dark { --card; --text; }
 
   .back-wrapper{
   display: flex;
@@ -175,6 +202,15 @@ body.dark .btn-private{
   <a href="https://youtube.com/@mrrusdiana" target="_blank">MR. RUSDIANA</a>
   <div class="toggle" onclick="toggleMode()"><span></span></div>
 </header>
+
+<!-- NOTICE -->
+<div class="notice-box">
+  <div class="notice-line"></div>
+  <div class="notice-content">
+    <strong>Perhatian:</strong><br>
+    Link Dengan Password akan Expired/Kadaluwarsa dalam 1 Minggu setelah Upload, Jadi kalau sudah 1 Minggu gunakan link No Password aja ya, Thank You
+  </div>
+</div>
 
 <main id="itemList"></main>
   <div class="back-wrapper">
