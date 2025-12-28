@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADMIN DATZON - Access</title>
+    <style>
+        :root {
+            --bg-body: #0f172a;       /* Navy Dark */
+            --bg-card: #1e293b;       /* Slate Dark */
+            --text-main: #f1f5f9;     /* White/Gray */
+            --text-muted: #94a3b8;
+            --primary-green: #22c55e; /* Green */
+            --green-hover: #16a34a;
+            --error: #ef4444;
+            --input-bg: #334155;
+            --border: #475569;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Mencegah scroll saat modal aktif */
+        }
+
+        /* UTAMA: CONTAINER TENGAH */
+        .main-container {
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            transition: filter 0.3s ease;
+        }
+
+        /* EFEK BLUR SAAT LOCKED */
+        .blurred {
+            filter: blur(8px);
+            pointer-events: none;
+        }
+
+        /* JUDUL BESAR */
+        h1.main-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 3rem;
+            letter-spacing: 2px;
+            color: var(--text-main);
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        /* NAVIGASI TOMBOL */
+        .nav-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn-nav {
+            background-color: var(--primary-green);
+            color: white;
+            text-decoration: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            border: none;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+        }
+
+        .btn-nav:hover {
+            background-color: var(--green-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.4);
+        }
+
+        .btn-nav:active {
+            transform: translateY(0);
+        }
+
+        /* MODAL PASSWORD */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-box {
+            background-color: var(--bg-card);
+            padding: 2rem;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 350px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+            border: 1px solid var(--border);
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            color: var(--text-main);
+        }
+
+        .input-pass {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: white;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            outline: none;
+        }
+
+        .input-pass:focus {
+            border-color: var(--primary-green);
+        }
+
+        .btn-confirm {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .btn-confirm:hover {
+            background-color: var(--green-hover);
+        }
+
+        .error-msg {
+            color: var(--error);
+            font-size: 0.9rem;
+            margin-top: 10px;
+            min-height: 20px;
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="main-container" id="mainContent">
+        <h1 class="main-title">ADMIN DATZON</h1>
+
+        <div class="nav-buttons">
+            <a href="maincontents.html" class="btn-nav">
+                CONTENTS
+            </a>
+
+            <a href="parts.html" class="btn-nav">
+                PARTS
+            </a>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="securityModal">
+        <div class="modal-box">
+            <h3 class="modal-title">🔒 Masukkan Password</h3>
+            <input type="password" id="passwordInput" class="input-pass" placeholder="***" autocomplete="off">
+            <button class="btn-confirm" onclick="checkPassword()">CONFIRM</button>
+            <div class="error-msg" id="errorMsg">Password Salah!</div>
+        </div>
+    </div>
+
+    <script>
+        // KONFIGURASI
+        const PASS_KEY = "MMM";
+        const STORAGE_KEY = "datzon_admin_session";
+        const SESSION_DURATION = 2 * 60 * 60 * 1000; // 2 Jam dalam milidetik
+
+        // DOM ELEMENTS
+        const modal = document.getElementById('securityModal');
+        const mainContent = document.getElementById('mainContent');
+        const passInput = document.getElementById('passwordInput');
+        const errorMsg = document.getElementById('errorMsg');
+
+        // FUNGSI CEK STATUS LOGIN SAAT LOAD
+        function initSecurity() {
+            const sessionData = localStorage.getItem(STORAGE_KEY);
+            
+            if (sessionData) {
+                const session = JSON.parse(sessionData);
+                const now = new Date().getTime();
+
+                // Cek apakah session masih valid (belum expired)
+                if (now < session.expiry) {
+                    unlockPage();
+                } else {
+                    lockPage(); // Session expired
+                }
+            } else {
+                lockPage(); // Belum pernah login
+            }
+        }
+
+        // KUNCI HALAMAN
+        function lockPage() {
+            modal.classList.add('active');
+            mainContent.classList.add('blurred');
+            localStorage.removeItem(STORAGE_KEY); // Bersihkan session lama
+        }
+
+        // BUKA HALAMAN
+        function unlockPage() {
+            modal.classList.remove('active');
+            mainContent.classList.remove('blurred');
+        }
+
+        // VERIFIKASI PASSWORD
+        function checkPassword() {
+            const inputVal = passInput.value;
+
+            if (inputVal === PASS_KEY) {
+                // Password Benar
+                const now = new Date().getTime();
+                const session = {
+                    loggedIn: true,
+                    expiry: now + SESSION_DURATION
+                };
+                
+                // Simpan ke LocalStorage
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+                
+                unlockPage();
+                passInput.value = ''; // Reset input
+                errorMsg.style.display = 'none';
+            } else {
+                // Password Salah
+                errorMsg.style.display = 'block';
+                passInput.value = '';
+                passInput.focus();
+                
+                // Animasi getar (opsional feedback visual)
+                const box = document.querySelector('.modal-box');
+                box.style.transform = 'scale(0.9) translateX(5px)';
+                setTimeout(() => {
+                    box.style.transform = 'scale(1) translateX(0)';
+                }, 100);
+            }
+        }
+
+        // EVENT LISTENER ENTER KEY
+        passInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                checkPassword();
+            }
+        });
+
+        // JALANKAN SAAT LOAD
+        window.onload = initSecurity;
+
+    </script>
+
+</body>
+</html>

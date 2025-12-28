@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Items Management</title>
+    <style>
+        :root {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --input-bg: #334155;
+            --border: #475569;
+            --btn-blue: #3b82f6;
+            --btn-blue-hover: #2563eb;
+            --btn-red: #ef4444;
+            --btn-red-hover: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border: 1px solid var(--border);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--btn-blue);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: var(--input-bg);
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+        }
+
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 2rem;
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            transition: 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-save {
+            background-color: var(--btn-blue);
+        }
+        .btn-save:hover { background-color: var(--btn-blue-hover); }
+
+        .btn-delete {
+            background-color: var(--btn-red);
+        }
+        .btn-delete:hover { background-color: var(--btn-red-hover); }
+
+        .divider {
+            height: 1px;
+            background-color: var(--border);
+            margin: 1.5rem 0;
+            border: none;
+        }
+
+        #notification {
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            min-height: 20px;
+            font-weight: bold;
+        }
+        .success { color: #4ade80; }
+        .error { color: #f87171; }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Admin Panel</h1>
+            <p>Items Management</p>
+        </header>
+
+        <div class="form-group">
+            <label for="itemSelector">Pilih Konten (Items)</label>
+            <select id="itemSelector">
+                <option value="">-- Loading Data... --</option>
+            </select>
+        </div>
+
+        <hr class="divider">
+
+        <div class="form-group">
+            <label for="docId">Document ID (Unik / Edit untuk Buat Baru)</label>
+            <input type="text" id="docId" placeholder="contoh: item-01">
+        </div>
+
+        <div class="form-group">
+            <label for="title">Judul (Title)</label>
+            <input type="text" id="title" placeholder="Nama Item">
+        </div>
+
+        <div class="form-group">
+            <label for="image">Image URL</label>
+            <input type="text" id="image" placeholder="https://...">
+        </div>
+
+        <div class="form-group">
+            <label for="publiclink">Public Link</label>
+            <input type="text" id="publiclink" placeholder="https://...">
+        </div>
+
+        <div class="form-group">
+            <label for="privatelink">Private Link</label>
+            <input type="text" id="privatelink" placeholder="https://...">
+        </div>
+
+        <div class="form-group">
+            <label for="order">Order (Urutan)</label>
+            <input type="number" id="order" placeholder="0">
+        </div>
+
+        <div class="form-group">
+            <div class="checkbox-group" onclick="document.getElementById('active').click()">
+                <input type="checkbox" id="active">
+                <label for="active">Status Active</label>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button id="btnDelete" class="btn-delete">HAPUS</button>
+            <button id="btnSave" class="btn-save">SIMPAN / UPDATE</button>
+        </div>
+
+        <div id="notification"></div>
+    </div>
+
+    <script type="module">
+        // Import functions from Firebase SDK v9
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            setDoc, 
+            deleteDoc, 
+            onSnapshot,
+            query,
+            orderBy
+        } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+        // ============================================
+        // CONFIG (JANGAN DIUBAH SESUAI REQUEST)
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyA3aIqisDiMJodevc3r_8w4i5KzD3C3880",
+            authDomain: "rusdianacuy.firebaseapp.com",
+            projectId: "rusdianacuy",
+            storageBucket: "rusdianacuy.firebasestorage.app",
+            messagingSenderId: "236793154782",
+            appId: "1:236793154782:web:4e8df196244176bfcdc64f",
+            measurementId: "G-ZH2PQ2ZNST"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const COLLECTION_NAME = "items";
+
+        // DOM Elements
+        const selector = document.getElementById('itemSelector');
+        const inpId = document.getElementById('docId');
+        const inpTitle = document.getElementById('title');
+        const inpImage = document.getElementById('image');
+        const inpPublic = document.getElementById('publiclink');
+        const inpPrivate = document.getElementById('privatelink');
+        const inpOrder = document.getElementById('order');
+        const inpActive = document.getElementById('active');
+        const btnSave = document.getElementById('btnSave');
+        const btnDelete = document.getElementById('btnDelete');
+        const notify = document.getElementById('notification');
+
+        // Cache Data
+        let itemsCache = {};
+
+        // 1. LISTEN TO FIRESTORE & POPULATE DROPDOWN
+        const q = query(collection(db, COLLECTION_NAME), orderBy("order", "asc"));
+        
+        onSnapshot(q, (snapshot) => {
+            const currentSelection = selector.value;
+            selector.innerHTML = '<option value="">-- Pilih Konten --</option>';
+            itemsCache = {};
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                itemsCache[doc.id] = data;
+
+                const option = document.createElement('option');
+                option.value = doc.id;
+                option.textContent = `${data.order} - ${data.title || doc.id}`;
+                selector.appendChild(option);
+            });
+
+            // Restore selection if exists, else reset
+            if (currentSelection && itemsCache[currentSelection]) {
+                selector.value = currentSelection;
+            }
+        }, (error) => {
+            showNotify("Error loading data: " + error.message, true);
+        });
+
+        // 2. HANDLE SELECTION
+        selector.addEventListener('change', () => {
+            const id = selector.value;
+            if (id && itemsCache[id]) {
+                const data = itemsCache[id];
+                
+                // Isi Form
+                inpId.value = id;
+                inpTitle.value = data.title || "";
+                inpImage.value = data.image || "";
+                inpPublic.value = data.publiclink || "";
+                inpPrivate.value = data.privatelink || "";
+                inpOrder.value = data.order || 0;
+                inpActive.checked = data.active === true;
+            } else {
+                // Clear Form (Mode Buat Baru)
+                clearForm();
+            }
+        });
+
+        // 3. HANDLE SAVE / UPDATE
+        btnSave.addEventListener('click', async () => {
+            const id = inpId.value.trim();
+            if (!id) {
+                showNotify("Document ID WAJIB diisi!", true);
+                return;
+            }
+
+            const payload = {
+                title: inpTitle.value,
+                image: inpImage.value,
+                publiclink: inpPublic.value,
+                privatelink: inpPrivate.value,
+                order: Number(inpOrder.value),
+                active: inpActive.checked
+            };
+
+            setLoading(true);
+            try {
+                await setDoc(doc(db, COLLECTION_NAME, id), payload, { merge: true });
+                showNotify("Data Berhasil Disimpan! ✅");
+                
+                // Jika ini data baru, clear form setelah simpan
+                if (!selector.value) {
+                    clearForm();
+                }
+            } catch (err) {
+                showNotify("Gagal Simpan: " + err.message, true);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // 4. HANDLE DELETE
+        btnDelete.addEventListener('click', async () => {
+            const id = inpId.value.trim();
+            
+            if (!id) {
+                showNotify("Pilih item atau isi Document ID untuk menghapus", true);
+                return;
+            }
+
+            if (!confirm(`Yakin ingin MENGHAPUS item: ${id}?`)) return;
+
+            setLoading(true);
+            try {
+                await deleteDoc(doc(db, COLLECTION_NAME, id));
+                showNotify("Data Berhasil Dihapus! 🗑️");
+                clearForm();
+                selector.value = "";
+            } catch (err) {
+                showNotify("Gagal Hapus: " + err.message, true);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // UTILS
+        function clearForm() {
+            inpId.value = "";
+            inpTitle.value = "";
+            inpImage.value = "";
+            inpPublic.value = "";
+            inpPrivate.value = "";
+            inpOrder.value = "";
+            inpActive.checked = false;
+        }
+
+        function showNotify(msg, isError = false) {
+            notify.textContent = msg;
+            notify.className = isError ? "error" : "success";
+            setTimeout(() => {
+                notify.textContent = "";
+            }, 3000);
+        }
+
+        function setLoading(isLoading) {
+            btnSave.disabled = isLoading;
+            btnDelete.disabled = isLoading;
+            btnSave.textContent = isLoading ? "Processing..." : "SIMPAN / UPDATE";
+        }
+    </script>
+</body>
+</html>

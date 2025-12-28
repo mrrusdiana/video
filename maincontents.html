@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Part Manager</title>
+    <style>
+        :root {
+            --bg-body: #0f172a;       /* Navy Dark */
+            --bg-card: #1e293b;       /* Slate Dark */
+            --text-main: #f1f5f9;     /* Light Gray */
+            --text-muted: #94a3b8;
+            --input-bg: #334155;
+            --border-color: #475569;
+            --primary: #3b82f6;       /* Blue */
+            --danger: #ef4444;        /* Red */
+            --success: #22c55e;       /* Green */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: var(--bg-card);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+        }
+
+        /* HEADER */
+        header {
+            margin-bottom: 2rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* FORM ELEMENTS */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background-color: #0f172a;
+        }
+
+        /* CHECKBOX STYLE */
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--input-bg);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .checkbox-wrapper input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper label {
+            margin-bottom: 0;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        /* BUTTONS */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .btn-save {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-delete {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-save:hover, .btn-delete:hover {
+            opacity: 0.9;
+        }
+
+        /* NOTIFICATION */
+        #statusMsg {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            min-height: 20px;
+        }
+        .status-success { color: var(--success); }
+        .status-error { color: var(--danger); }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Admin Panel</h1>
+            <p>Part Management System</p>
+        </header>
+
+        <div class="form-group">
+            <label for="partSelector">Pilih Konten (Items)</label>
+            <select id="partSelector">
+                <option value="">-- Loading Data... --</option>
+            </select>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 20px 0;">
+
+        <form id="editForm">
+            <div class="form-group">
+                <label for="docId">Document ID</label>
+                <input type="text" id="docId" placeholder="ID Dokumen" disabled>
+            </div>
+
+            <div class="form-group">
+                <label for="title">Judul (Title)</label>
+                <input type="text" id="title" placeholder="Nama Part / Judul">
+            </div>
+
+            <div class="form-group">
+                <label for="image">Image URL</label>
+                <input type="text" id="image" placeholder="https://example.com/image.png">
+            </div>
+
+            <div class="form-group">
+                <label for="order">Urutan (Order)</label>
+                <input type="number" id="order" placeholder="0">
+            </div>
+
+            <div class="form-group">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="active">
+                    <label for="active">Status Active</label>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button type="button" id="btnDelete" class="btn-delete">HAPUS</button>
+                <button type="button" id="btnSave" class="btn-save">SIMPAN / UPDATE</button>
+            </div>
+        </form>
+
+        <div id="statusMsg"></div>
+    </div>
+
+    <script type="module">
+        // Import Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            onSnapshot, 
+            setDoc, 
+            deleteDoc 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // ==========================================
+        // ⚠️ KONFIGURASI FIREBASE (WAJIB DIGANTI)
+        // ==========================================
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyA3aIqisDiMJodevc3r_8w4i5KzD3C3880",
+  authDomain: "rusdianacuy.firebaseapp.com",
+  projectId: "rusdianacuy",
+  storageBucket: "rusdianacuy.firebasestorage.app",
+  messagingSenderId: "236793154782",
+  appId: "1:236793154782:web:4e8df196244176bfcdc64f",
+  measurementId: "G-ZH2PQ2ZNST"
+};
+
+        // Cek apakah user sudah mengganti config dummy
+        if (firebaseConfig.apiKey === "GANTI_DENGAN_API_KEY_KAMU") {
+            alert("⚠️ PERHATIAN: Kamu belum memasukkan konfigurasi Firebase!\nSilakan edit file HTML ini dan masukkan config di bagian script.");
+        }
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const COLLECTION_NAME = "mainContents";
+
+        // DOM Elements
+        const selectEl = document.getElementById('partSelector');
+        const docIdEl = document.getElementById('docId');
+        const titleEl = document.getElementById('title');
+        const imageEl = document.getElementById('image');
+        const orderEl = document.getElementById('order');
+        const activeEl = document.getElementById('active');
+        const btnSave = document.getElementById('btnSave');
+        const btnDelete = document.getElementById('btnDelete');
+        const statusMsg = document.getElementById('statusMsg');
+
+        // Local Cache untuk Data (Supaya tidak request ulang saat select)
+        let partsCache = {};
+
+        // ---------------------------------------------------------
+        // 1. LISTEN TO FIRESTORE (POPULATE DROPDOWN ONLY)
+        // ---------------------------------------------------------
+        onSnapshot(collection(db, COLLECTION_NAME), (snapshot) => {
+            // Simpan posisi seleksi saat ini agar tidak reset saat ada update realtime
+            const currentSelection = selectEl.value;
+            
+            // Reset Dropdown
+            selectEl.innerHTML = '<option value="">-- Pilih Konten --</option>';
+            partsCache = {}; // Clear cache
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                partsCache[doc.id] = data; // Simpan ke memory lokal
+
+                // Buat element option
+                const option = document.createElement('option');
+                option.value = doc.id;
+                // Format Tampilan Dropdown: ID - Judul
+                option.textContent = `${doc.id} - ${data.title || '(Tanpa Judul)'}`;
+                selectEl.appendChild(option);
+            });
+
+            // Kembalikan seleksi jika masih ada
+            if (currentSelection && partsCache[currentSelection]) {
+                selectEl.value = currentSelection;
+            }
+        }, (error) => {
+            console.error("Error getting documents: ", error);
+            showStatus("Gagal memuat data: " + error.message, true);
+        });
+
+        // ---------------------------------------------------------
+        // 2. HANDLE SELECTION CHANGE (AUTO FILL FORM)
+        // ---------------------------------------------------------
+        selectEl.addEventListener('change', (e) => {
+            const selectedId = e.target.value;
+            resetForm();
+
+            if (selectedId && partsCache[selectedId]) {
+                const data = partsCache[selectedId];
+                
+                // Isi Form
+                docIdEl.value = selectedId;
+                titleEl.value = data.title || '';
+                imageEl.value = data.image || '';
+                orderEl.value = data.order !== undefined ? data.order : 0;
+                activeEl.checked = data.active === true; // Pastikan boolean
+            }
+        });
+
+        // ---------------------------------------------------------
+        // 3. HANDLE SAVE / UPDATE
+        // ---------------------------------------------------------
+        btnSave.addEventListener('click', async () => {
+            const id = docIdEl.value.trim();
+            
+            // Validasi sederhana
+            if (!id && !selectEl.value) {
+                // Logic tambahan: Jika ingin buat baru, user harus pilih opsi khusus atau ketik ID.
+                // Sesuai request, fokus edit. Jika ID kosong, warning.
+                showStatus("Pilih part terlebih dahulu!", true);
+                return;
+            }
+
+            // Jika user secara manual ingin menambah item baru, mereka butuh cara input ID.
+            // Tapi karena input ID disabled (sesuai req), kita pakai ID dari seleksi.
+            // Jika dropdown kosong, kita tidak bisa simpan.
+            
+            const dataToSave = {
+                title: titleEl.value,
+                image: imageEl.value,
+                order: Number(orderEl.value),
+                active: activeEl.checked
+            };
+
+            setLoading(true);
+            try {
+                // Menggunakan setDoc dengan merge: true agar aman
+                await setDoc(doc(db, COLLECTION_NAME, id), dataToSave, { merge: true });
+                showStatus("✅ Data berhasil disimpan!");
+            } catch (error) {
+                console.error("Error writing document: ", error);
+                showStatus("❌ Gagal menyimpan: " + error.message, true);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // ---------------------------------------------------------
+        // 4. HANDLE DELETE
+        // ---------------------------------------------------------
+        btnDelete.addEventListener('click', async () => {
+            const id = docIdEl.value;
+
+            if (!id) {
+                showStatus("Pilih part yang akan dihapus.", true);
+                return;
+            }
+
+            if (confirm(`Apakah Anda yakin ingin MENGHAPUS part ID: ${id}?`)) {
+                setLoading(true);
+                try {
+                    await deleteDoc(doc(db, COLLECTION_NAME, id));
+                    showStatus("🗑️ Data berhasil dihapus.");
+                    resetForm();
+                    selectEl.value = ""; // Reset dropdown
+                } catch (error) {
+                    console.error("Error removing document: ", error);
+                    showStatus("❌ Gagal menghapus: " + error.message, true);
+                } finally {
+                    setLoading(false);
+                }
+            }
+        });
+
+        // ---------------------------------------------------------
+        // UTILS
+        // ---------------------------------------------------------
+        function resetForm() {
+            docIdEl.value = "";
+            titleEl.value = "";
+            imageEl.value = "";
+            orderEl.value = "";
+            activeEl.checked = false;
+            statusMsg.textContent = "";
+        }
+
+        function showStatus(msg, isError = false) {
+            statusMsg.textContent = msg;
+            statusMsg.className = isError ? 'status-error' : 'status-success';
+            
+            // Hilangkan pesan setelah 3 detik
+            setTimeout(() => {
+                statusMsg.textContent = "";
+                statusMsg.className = "";
+            }, 3000);
+        }
+
+        function setLoading(isLoading) {
+            if (isLoading) {
+                btnSave.textContent = "Processing...";
+                btnSave.disabled = true;
+                btnDelete.disabled = true;
+            } else {
+                btnSave.textContent = "SIMPAN / UPDATE";
+                btnSave.disabled = false;
+                btnDelete.disabled = false;
+            }
+        }
+
+    </script>
+</body>
+</html>
